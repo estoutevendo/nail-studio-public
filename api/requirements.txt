@@ -1,0 +1,10 @@
+fastapi==0.138.2
+uvicorn==0.49.0
+sqlalchemy==2.0.51
+psycopg2-binary==2.9.12
+python-dotenv==1.2.2
+apscheduler==3.11.3
+requests==2.34.2
+python-jose==3.5.0
+# zoneinfo precisa do banco de fusos; em alguns servidores Linux ele não vem instalado
+tzdata==2026.2

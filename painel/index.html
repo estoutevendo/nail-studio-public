@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ateliê — Painel</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --rose:    #C9847A;
+    --rose-lt: #F2E8E6;
+    --cream:   #FAF7F5;
+    --ink:     #2A1F1D;
+    --muted:   #8A7470;
+    --white:   #FFFFFF;
+    --green:   #6B9E7A;
+    --red:     #C97A7A;
+    --border:  #E8DEDB;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; }
+
+  /* LOGIN */
+  .login-overlay {
+    position: fixed; inset: 0; background: var(--cream);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 999; padding: 24px;
+  }
+  .login-box {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 20px; padding: 40px 32px; width: 100%; max-width: 360px;
+    text-align: center;
+  }
+  .login-logo { font-family: 'Playfair Display', serif; font-size: 26px; margin-bottom: 8px; }
+  .login-logo span { color: var(--rose); }
+  .login-sub { font-size: 13px; color: var(--muted); margin-bottom: 32px; }
+  .login-input {
+    width: 100%; padding: 12px 16px; border: 1px solid var(--border);
+    border-radius: 10px; font-size: 15px; font-family: 'Inter', sans-serif;
+    margin-bottom: 12px; outline: none; text-align: center; letter-spacing: 2px;
+  }
+  .login-input:focus { border-color: var(--rose); }
+  .login-btn {
+    width: 100%; padding: 12px; background: var(--rose); color: var(--white);
+    border: none; border-radius: 10px; font-size: 15px; font-weight: 600;
+    cursor: pointer; font-family: 'Inter', sans-serif; margin-top: 4px;
+  }
+  .login-btn:hover { background: #B87068; }
+  .login-error { color: var(--red); font-size: 13px; margin-top: 10px; display: none; }
+
+  /* HEADER */
+  header {
+    background: var(--white); border-bottom: 1px solid var(--border);
+    padding: 16px 24px; display: flex; align-items: center;
+    justify-content: space-between; position: sticky; top: 0; z-index: 100;
+  }
+  .logo { font-family: 'Playfair Display', serif; font-size: 20px; }
+  .logo span { color: var(--rose); }
+  .header-right { display: flex; align-items: center; gap: 16px; }
+  .header-date { font-size: 13px; color: var(--muted); }
+  .logout-btn {
+    font-size: 12px; color: var(--muted); background: none;
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 5px 10px; cursor: pointer;
+  }
+
+  /* LAYOUT */
+  .container { max-width: 900px; margin: 0 auto; padding: 24px 16px; }
+
+  /* TABS */
+  .tabs {
+    display: flex; gap: 4px; background: var(--white);
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 4px; margin-bottom: 24px;
+  }
+  .tab {
+    flex: 1; padding: 10px; border: none; background: transparent;
+    border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 13px;
+    font-weight: 500; color: var(--muted); cursor: pointer; transition: all 0.2s; text-align: center;
+  }
+  .tab.active { background: var(--rose); color: var(--white); }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* CARDS */
+  .card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px; margin-bottom: 12px;
+  }
+  .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+  .card-time { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--rose); line-height: 1; }
+  .card-name { font-size: 16px; font-weight: 600; margin-top: 4px; }
+  .card-info { font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .badge { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .badge-agendado   { background: #EEF4FF; color: #4A7BC4; }
+  .badge-confirmado { background: #EEFAF2; color: var(--green); }
+  .badge-concluido  { background: #F5F5F5; color: #888; }
+  .badge-cancelado  { background: #FFF0F0; color: var(--red); }
+  .card-actions { display: flex; gap: 8px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+
+  .btn { padding: 8px 16px; border-radius: 8px; border: none; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+  .btn-primary { background: var(--rose); color: var(--white); }
+  .btn-primary:hover { background: #B87068; }
+  .btn-danger  { background: #FFF0F0; color: var(--red); }
+  .btn-danger:hover { background: #FFE0E0; }
+  .btn-outline { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+  .btn-green { background: var(--green); color: var(--white); }
+  .btn-green:hover { background: #5A8D69; }
+
+  /* DATE NAV */
+  .date-nav {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+    background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px;
+  }
+  .date-nav button { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 16px; color: var(--muted); }
+  .date-nav button:hover { background: var(--cream); }
+  .date-display { flex: 1; text-align: center; font-weight: 600; font-size: 15px; }
+  .date-input { border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; font-family: 'Inter', sans-serif; font-size: 13px; color: var(--ink); background: var(--cream); }
+
+  /* FORM */
+  .form-group { margin-bottom: 16px; }
+  label { display: block; font-size: 13px; font-weight: 500; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
+  input[type=text], input[type=date], select {
+    width: 100%; padding: 10px 14px; border: 1px solid var(--border);
+    border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 14px;
+    color: var(--ink); background: var(--white); outline: none; transition: border 0.2s;
+  }
+  input:focus, select:focus { border-color: var(--rose); }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(42,31,29,0.4); z-index: 200; align-items: center; justify-content: center; padding: 16px; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--white); border-radius: 16px; padding: 24px; width: 100%; max-width: 420px; }
+  .modal h3 { font-family: 'Playfair Display', serif; font-size: 20px; margin-bottom: 20px; }
+  .modal-actions { display: flex; gap: 8px; margin-top: 20px; }
+
+  /* STATS */
+  .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px; }
+  .stat-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; }
+  .stat-value { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--rose); }
+  .stat-label { font-size: 12px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+
+  /* EMPTY / LOADING */
+  .empty { text-align: center; padding: 48px 24px; color: var(--muted); }
+  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+  .loading { text-align: center; padding: 40px; color: var(--muted); font-size: 14px; }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--ink); color: var(--white); padding: 12px 24px; border-radius: 8px; font-size: 14px; transition: transform 0.3s; z-index: 999; }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-box">
+    <div class="login-logo">Ateliê <span>Nail Studio</span></div>
+    <div class="login-sub">Painel de agendamentos</div>
+    <input type="password" class="login-input" id="loginSenha" placeholder="••••••••" onkeydown="if(event.key==='Enter') fazerLogin()">
+    <button class="login-btn" onclick="fazerLogin()">Entrar</button>
+    <div class="login-error" id="loginErro">Senha incorreta. Tente novamente.</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" style="display:none">
+  <header>
+    <div class="logo">Ateliê <span>Nail Studio</span></div>
+    <div class="header-right">
+      <div class="header-date" id="headerDate"></div>
+      <button class="logout-btn" onclick="logout()">Sair</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('hoje')">Hoje</button>
+      <button class="tab" onclick="switchTab('data')">Por data</button>
+      <button class="tab" onclick="switchTab('novo')">+ Novo</button>
+      <button class="tab" onclick="switchTab('clientes')">Clientes</button>
+    </div>
+
+    <!-- HOJE -->
+    <div id="panel-hoje" class="panel active">
+      <div class="stats" id="statsHoje"></div>
+      <div id="listaHoje"><div class="loading">Carregando...</div></div>
+    </div>
+
+    <!-- POR DATA -->
+    <div id="panel-data" class="panel">
+      <div class="date-nav">
+        <button onclick="mudarData(-1)">‹</button>
+        <div class="date-display" id="dataDisplay"></div>
+        <button onclick="mudarData(1)">›</button>
+        <input type="date" class="date-input" id="datePicker" onchange="irParaData(this.value)">
+      </div>
+      <div id="listaData"><div class="loading">Carregando...</div></div>
+    </div>
+
+    <!-- NOVO -->
+    <div id="panel-novo" class="panel">
+      <div class="card">
+        <h3 style="font-family:'Playfair Display',serif;font-size:20px;margin-bottom:20px">Novo agendamento</h3>
+        <div class="form-group"><label>Nome da cliente</label><input type="text" id="novoNome" placeholder="Ex: Ana Silva"></div>
+        <div class="form-group"><label>Telefone (com DDD, sem 55)</label><input type="text" id="novoTel" placeholder="Ex: 6299999999"></div>
+        <div class="form-group"><label>Serviço</label><select id="novoServico"></select></div>
+        <div class="form-group"><label>Data</label><input type="date" id="novaData"></div>
+        <div class="form-group"><label>Horário</label><select id="novoHorario"><option>Selecione uma data primeiro</option></select></div>
+        <button class="btn btn-primary" style="width:100%;padding:12px" onclick="criarAgendamento()">Confirmar agendamento</button>
+      </div>
+    </div>
+
+    <!-- CLIENTES -->
+    <div id="panel-clientes" class="panel">
+      <div class="card" style="margin-bottom:16px">
+        <input type="text" id="buscaCliente" placeholder="Buscar por nome ou telefone..." oninput="filtrarClientes()">
+      </div>
+      <div id="listaClientes"><div class="loading">Carregando...</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDITAR -->
+<div class="modal-overlay" id="modalEditar">
+  <div class="modal">
+    <h3>Editar agendamento</h3>
+    <input type="hidden" id="editId">
+    <div class="form-group"><label>Data</label><input type="date" id="editData"></div>
+    <div class="form-group"><label>Horário</label><select id="editHorario"></select></div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" style="flex:1" onclick="salvarEdicao()">Salvar</button>
+      <button class="btn btn-outline" onclick="fecharModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// Endereço da API. Em produção, troque pela URL do deploy.
+const API = 'http://127.0.0.1:8000'
+
+// Nome e telefone chegam do WhatsApp (qualquer pessoa digita o que quiser),
+// então nunca vão para o innerHTML sem passar por aqui.
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => (
+  { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+))
+
+// toISOString() converte para UTC e, depois das 21h, devolveria o dia seguinte
+function dataLocalISO(d) {
+  const p = n => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`
+}
+let dataAtual = new Date()
+let todosClientes = []
+let todosServicos = []
+const HORARIOS_SEMANA = ['07:00','08:30','10:00','13:00','14:30','16:00']
+const HORARIOS_SABADO = ['07:00','08:30','10:00','11:30']
+
+// AUTH
+async function fazerLogin() {
+  const senha = document.getElementById('loginSenha').value
+  const erro  = document.getElementById('loginErro')
+  erro.style.display = 'none'
+  try {
+    const res = await fetch(`${API}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ senha })
+    })
+    if (!res.ok) { erro.style.display = 'block'; return }
+    const data = await res.json()
+    localStorage.setItem('nail_token', data.token)
+    iniciarApp()
+  } catch {
+    erro.textContent = 'Erro ao conectar com o servidor.'
+    erro.style.display = 'block'
+  }
+}
+
+async function verificarAuth() {
+  const token = localStorage.getItem('nail_token')
+  if (!token) return false
+  try {
+    const res = await fetch(`${API}/verificar-token?token=${token}`)
+    return res.ok
+  } catch { return false }
+}
+
+function logout() {
+  localStorage.removeItem('nail_token')
+  document.getElementById('app').style.display = 'none'
+  document.getElementById('loginOverlay').style.display = 'flex'
+  document.getElementById('loginSenha').value = ''
+}
+
+function getToken() { return localStorage.getItem('nail_token') }
+
+async function apiFetch(url, opts = {}) {
+  const token = getToken()
+  opts.headers = { ...(opts.headers || {}), 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+  const res = await fetch(API + url, opts)
+  // o token vale 8h; vencido, a API responde 401 e voltamos para o login
+  if (res.status === 401) {
+    logout()
+    throw new Error('não autorizado')
+  }
+  return res
+}
+
+async function iniciarApp() {
+  document.getElementById('loginOverlay').style.display = 'none'
+  document.getElementById('app').style.display = 'block'
+  atualizarHeaderDate()
+  carregarHoje()
+  carregarServicos()
+  carregarClientes()
+  atualizarDisplayData()
+  document.getElementById('novaData').addEventListener('change', async (e) => {
+    const horarios = await buscarHorariosDisponiveis(e.target.value)
+    preencherSelectHorario('novoHorario', horarios)
+  })
+  document.getElementById('editData').addEventListener('change', async (e) => {
+    const horarios = await buscarHorariosDisponiveis(e.target.value)
+    preencherSelectHorario('editHorario', horarios)
+  })
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const ok = await verificarAuth()
+  if (ok) iniciarApp()
+})
+
+function atualizarHeaderDate() {
+  document.getElementById('headerDate').textContent = new Date().toLocaleDateString('pt-BR', {
+    weekday: 'long', day: 'numeric', month: 'long'
+  })
+}
+
+// TABS
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    t.classList.toggle('active', ['hoje','data','novo','clientes'][i] === tab)
+  })
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'))
+  document.getElementById(`panel-${tab}`).classList.add('active')
+  if (tab === 'data') carregarPorData()
+  if (tab === 'clientes') renderClientes()
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast')
+  t.textContent = msg
+  t.classList.add('show')
+  setTimeout(() => t.classList.remove('show'), 3000)
+}
+
+function badge(status) {
+  return `<span class="badge badge-${esc(status)}">${esc(status)}</span>`
+}
+
+function formatarHora(str) {
+  return new Date(str).toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' })
+}
+
+// HOJE
+async function carregarHoje() {
+  const hoje = new Date().toLocaleDateString('pt-BR')
+  try {
+    const res = await apiFetch(`/admin/agendamentos?data=${encodeURIComponent(hoje)}`)
+    const data = await res.json()
+    renderStats(data, 'statsHoje')
+    renderAgendamentos(data, 'listaHoje')
+  } catch {
+    document.getElementById('listaHoje').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><p>Erro ao conectar com a API.<br>Verifique se ela está rodando.</p></div>'
+  }
+}
+
+function renderStats(agendamentos, elId) {
+  const total      = agendamentos.length
+  const confirmados = agendamentos.filter(a => a.status === 'confirmado').length
+  const cancelados = agendamentos.filter(a => a.status === 'cancelado').length
+  const fat = agendamentos.filter(a => ['agendado','confirmado','concluido'].includes(a.status)).reduce((s,a) => s + parseFloat(a.servico.preco), 0)
+  document.getElementById(elId).innerHTML = `
+    <div class="stat-card"><div class="stat-value">${total}</div><div class="stat-label">Total</div></div>
+    <div class="stat-card"><div class="stat-value">${confirmados}</div><div class="stat-label">Confirmadas</div></div>
+    <div class="stat-card"><div class="stat-value">${cancelados}</div><div class="stat-label">Canceladas</div></div>
+    <div class="stat-card"><div class="stat-value">R$${fat.toFixed(0)}</div><div class="stat-label">Faturamento</div></div>
+  `
+}
+
+function renderAgendamentos(agendamentos, elId) {
+  const el = document.getElementById(elId)
+  if (!agendamentos.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">💅</div><p>Nenhum agendamento neste dia</p></div>'
+    return
+  }
+  const sorted = [...agendamentos].sort((a,b) => new Date(a.data_hora) - new Date(b.data_hora))
+  el.innerHTML = sorted.map(a => `
+    <div class="card" id="card-${a.id}">
+      <div class="card-header">
+        <div>
+          <div class="card-time">${formatarHora(a.data_hora)}</div>
+          <div class="card-name">${esc(a.cliente.nome)}</div>
+          <div class="card-info">✂️ ${esc(a.servico.nome)} · R$ ${a.servico.preco}</div>
+          <div class="card-info">📞 ${esc(a.cliente.telefone)}</div>
+        </div>
+        ${badge(a.status)}
+      </div>
+      ${a.status !== 'concluido' && a.status !== 'cancelado' ? `
+      <div class="card-actions">
+        <button class="btn btn-primary" onclick="abrirEditar(${a.id}, '${a.data_hora}')">Editar</button>
+        <button class="btn btn-green" onclick="confirmar(${a.id})">Confirmar</button>
+        <button class="btn btn-danger" onclick="cancelarAdmin(${a.id})">Cancelar</button>
+      </div>` : ''}
+    </div>
+  `).join('')
+}
+
+// DATA NAV
+function atualizarDisplayData() {
+  const dias = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado']
+  const d = dataAtual
+  document.getElementById('dataDisplay').textContent = `${dias[d.getDay()]}, ${d.toLocaleDateString('pt-BR')}`
+  document.getElementById('datePicker').value = dataLocalISO(d)
+}
+
+function mudarData(delta) {
+  dataAtual.setDate(dataAtual.getDate() + delta)
+  atualizarDisplayData()
+  carregarPorData()
+}
+
+function irParaData(val) {
+  dataAtual = new Date(val + 'T12:00:00')
+  atualizarDisplayData()
+  carregarPorData()
+}
+
+async function carregarPorData() {
+  const dateStr = dataAtual.toLocaleDateString('pt-BR')
+  document.getElementById('listaData').innerHTML = '<div class="loading">Carregando...</div>'
+  try {
+    const res = await apiFetch(`/admin/agendamentos?data=${encodeURIComponent(dateStr)}`)
+    const data = await res.json()
+    renderAgendamentos(data, 'listaData')
+  } catch {
+    document.getElementById('listaData').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><p>Erro ao carregar</p></div>'
+  }
+}
+
+// SERVIÇOS
+async function carregarServicos() {
+  try {
+    const res = await apiFetch('/servicos')
+    todosServicos = await res.json()
+    document.getElementById('novoServico').innerHTML = todosServicos.map(s =>
+      `<option value="${s.id}">${esc(s.nome)} — R$ ${s.preco}</option>`
+    ).join('')
+  } catch {}
+}
+
+async function buscarHorariosDisponiveis(dateVal) {
+  if (!dateVal) return []
+  const [ano, mes, dia] = dateVal.split('-')
+  const dataStr = `${dia}/${mes}/${ano}`
+  try {
+    const res = await apiFetch(`/horarios-disponiveis?data=${encodeURIComponent(dataStr)}`)
+    const data = await res.json()
+    return data.horarios || []
+  } catch {
+    const d = new Date(dateVal + 'T12:00:00')
+    return d.getDay() === 6 ? HORARIOS_SABADO : HORARIOS_SEMANA
+  }
+}
+
+function preencherSelectHorario(elId, horarios) {
+  const sel = document.getElementById(elId)
+  sel.innerHTML = horarios.length
+    ? horarios.map(h => `<option value="${h}">${h}</option>`).join('')
+    : '<option value="">Nenhum horário disponível</option>'
+}
+
+// CRIAR
+async function criarAgendamento() {
+  const nome    = document.getElementById('novoNome').value.trim()
+  const tel     = document.getElementById('novoTel').value.trim()
+  const servico = document.getElementById('novoServico').value
+  const data    = document.getElementById('novaData').value
+  const horario = document.getElementById('novoHorario').value
+  if (!nome || !tel || !servico || !data || !horario) { showToast('Preencha todos os campos!'); return }
+  const [ano, mes, dia] = data.split('-')
+  const dataHora = `${ano}-${mes}-${dia}T${horario}:00`
+  try {
+    await apiFetch('/clientes', { method: 'POST', body: JSON.stringify({ nome, telefone: tel }) })
+    const res = await apiFetch('/agendamentos', { method: 'POST', body: JSON.stringify({ telefone: tel, servico_id: parseInt(servico), data_hora: dataHora }) })
+    if (!res.ok) { const err = await res.json(); showToast('❌ ' + (err.detail || 'Erro')); return }
+    showToast('✅ Agendamento criado!')
+    document.getElementById('novoNome').value = ''
+    document.getElementById('novoTel').value = ''
+    document.getElementById('novaData').value = ''
+    document.getElementById('novoHorario').innerHTML = '<option>Selecione uma data primeiro</option>'
+    carregarHoje()
+  } catch { showToast('❌ Erro ao conectar') }
+}
+
+// CONFIRMAR
+async function confirmar(id) {
+  try {
+    await apiFetch(`/agendamentos/${id}/confirmar`, { method: 'PATCH' })
+    showToast('✅ Confirmado!')
+    carregarHoje(); carregarPorData()
+  } catch { showToast('❌ Erro') }
+}
+
+// CANCELAR
+async function cancelarAdmin(id) {
+  if (!confirm('Cancelar este agendamento?')) return
+  try {
+    await apiFetch(`/admin/agendamentos/${id}/cancelar`, { method: 'PATCH' })
+    showToast('❌ Cancelado')
+    carregarHoje(); carregarPorData()
+  } catch { showToast('❌ Erro') }
+}
+
+// EDITAR
+function abrirEditar(id, dataHora) {
+  document.getElementById('editId').value = id
+  const d = new Date(dataHora)
+  const dataVal = dataLocalISO(d)
+  document.getElementById('editData').value = dataVal
+  const horarios = d.getDay() === 6 ? HORARIOS_SABADO : HORARIOS_SEMANA
+  const horaAtual = d.toTimeString().substring(0,5)
+  document.getElementById('editHorario').innerHTML = horarios.map(h => `<option value="${h}" ${h===horaAtual?'selected':''}>${h}</option>`).join('')
+  document.getElementById('modalEditar').classList.add('open')
+}
+
+function fecharModal() { document.getElementById('modalEditar').classList.remove('open') }
+
+async function salvarEdicao() {
+  const id      = document.getElementById('editId').value
+  const data    = document.getElementById('editData').value
+  const horario = document.getElementById('editHorario').value
+  const [ano, mes, dia] = data.split('-')
+  const dataHora = `${ano}-${mes}-${dia}T${horario}:00`
+  try {
+    const res = await apiFetch(`/admin/agendamentos/${id}/editar`, { method: 'PATCH', body: JSON.stringify({ data_hora: dataHora }) })
+    if (!res.ok) { const err = await res.json(); showToast('❌ ' + (err.detail || 'Erro')); return }
+    showToast('✅ Horário atualizado!')
+    fecharModal(); carregarHoje(); carregarPorData()
+  } catch { showToast('❌ Erro ao conectar') }
+}
+
+// CLIENTES
+async function carregarClientes() {
+  try {
+    const res = await apiFetch('/admin/clientes')
+    todosClientes = await res.json()
+    renderClientes()
+  } catch {}
+}
+
+function renderClientes() {
+  const busca = (document.getElementById('buscaCliente')?.value || '').toLowerCase()
+  const filtrados = todosClientes.filter(c => c.nome.toLowerCase().includes(busca) || c.telefone.includes(busca))
+  const el = document.getElementById('listaClientes')
+  if (!filtrados.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">👤</div><p>Nenhuma cliente encontrada</p></div>'; return }
+  el.innerHTML = filtrados.map(c => `
+    <div class="card">
+      <div style="font-weight:600">${esc(c.nome)}</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:4px">📞 ${esc(c.telefone)}</div>
+    </div>
+  `).join('')
+}
+
+function filtrarClientes() { renderClientes() }
+</script>
+</body>
+</html>

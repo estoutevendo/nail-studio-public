@@ -1,0 +1,13 @@
+# ambiente
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# dependências do Node
+node_modules/
+
+# segredos e sessão do WhatsApp (nunca versionar)
+.env
+.wwebjs_auth/
+.wwebjs_cache/
